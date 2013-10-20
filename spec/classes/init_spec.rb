@@ -23,6 +23,26 @@ describe "android" do
 
     it { should contain_file('/usr/local/android').with( { :owner => 'root', :group => 'root' }) }
     it { should contain_exec('unpack-androidsdk').with( { :cwd => '/usr/local/android',:user => 'root' } ) }
+
+    it { should contain_file('/etc/profile.d/android.sh').with({ :owner => 'root', :group => 'root', :mode  => '0644' }) }
+
+    it 'should export ANDROID_HOME and add to PATH' do
+      android_home = '/usr/local/android/android-sdk-linux'
+      content = catalogue.resource('file', '/etc/profile.d/android.sh').send(:parameters)[:content]
+      content.should include("export ANDROID_HOME=#{android_home}")
+      content.should include("export PATH=\"$PATH:#{android_home}/platform-tools:#{android_home}/tools\"")
+    end
+  end
+
+  context 'non-default sdk home' do
+    directory = '/opt/local/android'
+    let(:params) { { :installdir => directory } }
+
+    it 'should export ANDROID_HOME and add to PATH' do
+      content = catalogue.resource('file', '/etc/profile.d/android.sh').send(:parameters)[:content]
+      content.should include("export ANDROID_HOME=#{directory}/android-sdk-linux")
+      content.should include("export PATH=\"$PATH:#{directory}/android-sdk-linux/platform-tools:#{directory}/android-sdk-linux/tools\"")
+    end
   end
 
   context 'non-default version' do

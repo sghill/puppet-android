@@ -43,6 +43,14 @@ class android::sdk {
     user    => $android::user,
   }
 
+  file { '/etc/profile.d/android.sh':
+    ensure  => file,
+    owner   => 'root',
+    group   => 'root',
+    mode    => '0644',
+    content => template("${module_name}/android.sh.erb"), 
+  }
+
   # For 64bit systems, we need to install some 32bit libraries for the SDK
   # to work.
   if ($::kernel == 'Linux') and ($::architecture == 'x86_64' or $::architecture == 'amd64') {
