@@ -53,7 +53,7 @@ class android::sdk {
                              'zlib', 'libstdc++' ]
       }
       'Debian': {
-        $32bit_packages =  [ 'ia32-libs' ]
+        $32bit_packages =  [ 'lib32z1', 'lib32ncurses5', 'lib32bz2-1.0' ]
       }
       default : {
         $32bit_packages = undef
